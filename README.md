@@ -32,6 +32,8 @@ The following environmental variables are needed:
 You can start NotoriousBOT locally by running:
 
     bin/hubot -n NotoriousBOT -a slack
+    OR
+    npm run local
 
 You'll see some start up output about where your scripts come from and a
 prompt:
