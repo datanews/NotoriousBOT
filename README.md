@@ -24,6 +24,7 @@ The following environmental variables are needed:
 
     export REDISTOGO_URL=XXX
     export HUBOT_SLACK_TOKEN=XXXX
+    export HEROKU_URL=http://notoriousbot.herokuapp.com/
     export HUBOT_HEROKU_KEEPALIVE_URL=$(heroku apps:info -s  | grep web_url | cut -d= -f2)
 
 ## Running locally
@@ -55,11 +56,11 @@ This should already be done
 
     heroku create --stack cedar
     git push heroku master
-
-If your Heroku account has been verified you can run the following to enable
-and add the Redis to Go addon to your app.
-
     heroku addons:add redistogo:nano
+
+Add the environment variables (see Configuration above) to Heroku
+
+    heroku config:set HEROKU_URL=XXXX
 
 ### Updating
 
