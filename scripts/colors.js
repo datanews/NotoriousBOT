@@ -70,8 +70,8 @@ module.exports = function(robot) {
   });
 
   // Handle color name
-  robot.respond(/color ([A-z0-9]+)/i, function(msg) {
-    var color = msg.match[1].toLowerCase().trim().replace(/ /ig, '');
+  robot.respond(/color ([A-z0-9\s]+)/i, function(msg) {
+    var color = msg.match[1].toLowerCase().trim().replace(/\s/ig, '');
     var colors = getHexArrayFromColorNames(color);
 
     if (_.isArray(colors)) {
