@@ -18,6 +18,7 @@ var colorNames = require('./colors-names.js');
 
 // Get color
 function getImageFromHex(hex, msg, cb) {
+  hex = hex || '';
   hex = hex.replace(/#/ig, '');
 
   if (!hex || _.isArray(hex) || hex.length !== 8) {
@@ -49,9 +50,7 @@ function getHexArrayFromColorNames(name) {
 
     // Colors could be arrays of color names
     found = found.map(function(f, fi) {
-      if (colorNames[f]) {
-        return colorNames[f];
-      }
+      return (colorNames[f]) ? colorNames[f] : f;
     });
   }
 
