@@ -31,7 +31,7 @@ The following environmental variables are needed:
 
 You can start NotoriousBOT locally by running:
 
-    bin/hubot -n NotoriousBOT -a slack
+    bin/hubot -n NotoriousBOT
     OR
     npm run local
 

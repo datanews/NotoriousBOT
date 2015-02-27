@@ -5,7 +5,7 @@
   "author": "AP <apalazzolo@wnyc.org>",
   "description": "Notorious B.O.T. is here to help.",
   "scripts": {
-    "local": "bin/hubot -n NotoriousBOT -a slack"
+    "local": "bin/hubot -n NotoriousBOT"
   },
   "dependencies": {
     "hubot": "^2.11.1",
