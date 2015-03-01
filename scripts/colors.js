@@ -9,8 +9,8 @@
 //   None
 //
 // Commands:
-//   hubot color <hex>
-//   hubot color <name>
+//   hubot color <hex> - Turn your hex value into a swatch
+//   hubot color <name> - Turn names of colors into a swatch(s)
 
 var _ = require('lodash');
 var apiColorTemplate = 'http://www.colourlovers.com/api/color/[[[COLOR]]]?format=json';
