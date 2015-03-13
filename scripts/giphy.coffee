@@ -20,7 +20,9 @@ module.exports = (robot) ->
         if !err
           response = JSON.parse(body)
           images = response.data
-          
+
           if images.length > 0
             image = msg.random images
             msg.send image.images.fixed_height.url
+          else
+            msg.send 'Sorry, I couldn\'t find any gif\'s for that search.'
