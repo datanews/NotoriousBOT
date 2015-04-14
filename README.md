@@ -32,6 +32,13 @@ The following environmental variables are needed.  These should already be insta
     * A simple mechanism so Heroku doesn't go to sleep
 1. `export HUBOT_GOOGLE_CALENDAR_ID=XXXX && export HUBOT_GOOGLE_CALENDAR_CLIENT_ID=XXXX && export HUBOT_GOOGLE_CALENDAR_CLIENT_SECRET=XXXX && export HUBOT_GOOGLE_CALENDAR_REFRESH_TOKEN=XXXX`
     * Config for Hangouts scripts.  See `hangouts.coffee` for details.
+1. For Chartbeat integration:
+    * Default site: `export HUBOT_CHARTBEAT_SITE=example.com`
+    * All available sites `export HUBOT_CHARTBEAT_SITES=example1.com,example2.com`
+    * API key: `export HUBOT_CHARTBEAT_API_KEY=XXXXXXXXXXXXXXXX`
+1. Calculon (Spark Core) integration:
+    * Spark Core device ID: `export CALCULON_DEVICE_ID=XXXXXX`
+    * Access token is with the account that has claimed the device: `export CALCULON_ACCESS_TOKEN=XXXXXX`
 
 
 ## Running locally
