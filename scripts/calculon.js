@@ -8,6 +8,8 @@
 // Configuration:
 //   CALCULON_DEVICE_ID (Spark Core ID)
 //   CALCULON_ACCESS_TOKEN (Spark Core account access token)
+//   CALCULON_FORECAST_IO_KEY
+//   CALCULON_LOCATION
 //
 // Commands:
 //   icecream
@@ -19,10 +21,16 @@ var CronJob = require('cron').CronJob;
 // Environment variables
 var deviceID = process.env.CALCULON_DEVICE_ID;
 var accessToken = process.env.CALCULON_ACCESS_TOKEN;
+var forecastKey = process.env.CALCULON_FORECAST_IO_KEY;
+var forecastLocation = process.env.CALCULON_LOCATION;
 
 // Top level vars
 var sparkAPI = 'https://api.spark.io/v1';
 var sparkAPIDevice = sparkAPI + '/devices/' + deviceID;
+var commonHeaders = {
+  'Content-Type': 'application/x-www-form-urlencoded'
+};
+var forecastURL = 'https://api.forecast.io/forecast/' + forecastKey + '/' + forecastLocation;
 
 
 // Make options for commands
@@ -31,6 +39,7 @@ var commandsURLs = {
     return {
       url: sparkAPIDevice + '/icecream',
       method: 'POST',
+      headers: commonHeaders,
       form: {
         access_token: accessToken
       }
@@ -40,6 +49,7 @@ var commandsURLs = {
     return {
       url: sparkAPIDevice + '/chartbeat',
       method: 'POST',
+      headers: commonHeaders,
       form: {
         access_token: accessToken,
         params: count
@@ -51,7 +61,7 @@ var commandsURLs = {
 // Run command
 function calculon(command, done) {
   var args = arguments;
-  [].splice.apply(args, 0, 2);
+  [].splice.apply(args, [0, 2]);
   var options = commandsURLs[command].apply(this, args);
   return request(options, done);
 }
@@ -65,21 +75,33 @@ module.exports = function(robot) {
   cronJobs.icecream = new CronJob('0 0 14 * * *', function() {
     // Determine if temperature is good enough, then send room and Calculon
     // command
-    if (false) {
-      calculon('icecream', function(error, response, body) {
-        if (error) {
-          console.error(error);
-        }
+    request(forecastURL, function(error, response, body) {
+      if (error) {
+        console.error(error);
+        return;
+      }
 
-        robot.messageRoom('random', 'Ice cream time!');
-      });
-    }
+      // Parse and check temperature
+      var forecast = JSON.parse(body);
+      if (forecast.currently && forecast.currently.temperature > 60) {
+        calculon('icecream', function(error, response, body) {
+          if (error) {
+            console.error(error);
+            return;
+          }
+
+          robot.messageRoom('random', 'Ice cream time!');
+        });
+      }
+    });
   }, null, true, 'America/New_York');
 
   // Scheduling.  Chartbeat check
-  cronJobs.icecream = new CronJob('0 /10 * * * *', function() {
+  cronJobs.chartbeat = new CronJob('0 */10 * * * *', function() {
+    return;
+
     // Get Chartbeat API numbers an dupdate calculon
-    calculon('icecream', function(error, response, body) {
+    calculon('chartbeat', function(error, response, body) {
       if (error) {
         console.error(error);
       }
@@ -88,7 +110,7 @@ module.exports = function(robot) {
 
 
   // Hear ice cream
-  robot.hear(/ice[ |]cream/i, function(msg) {
+  robot.hear(/ice[ ]*cream/i, function(msg) {
     calculon('icecream', function(error, response, body) {
       msg.send(':icecream:');
     });

@@ -39,6 +39,8 @@ The following environmental variables are needed.  These should already be insta
 1. Calculon (Spark Core) integration:
     * Spark Core device ID: `export CALCULON_DEVICE_ID=XXXXXX`
     * Access token is with the account that has claimed the device: `export CALCULON_ACCESS_TOKEN=XXXXXX`
+    * API key for Forecast.io for checking current weather temp: `export CALCULON_FORECAST_IO_KEY=XXXX`
+    * Location to look for temperature: `export CALCULON_LOCATION=12.345,67.890`
 
 
 ## Running locally
