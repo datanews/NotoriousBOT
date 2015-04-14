@@ -12,7 +12,8 @@
 //   CALCULON_LOCATION
 //
 // Commands:
-//   icecream
+//   ice cream
+//   <hubot> camera <degrees_to_move>
 
 var _ = require('lodash');
 var request = require('request');
@@ -57,6 +58,17 @@ var commandsURLs = {
       form: {
         access_token: accessToken,
         params: count
+      }
+    };
+  },
+  camera: function(move) {
+    return {
+      url: sparkAPIDevice + '/camera',
+      method: 'POST',
+      headers: commonHeaders,
+      form: {
+        access_token: accessToken,
+        params: move
       }
     };
   }
@@ -142,7 +154,34 @@ module.exports = function(robot) {
   // Hear ice cream
   robot.hear(/ice[ ]*cream/i, function(msg) {
     calculon('icecream', function(error, response, body) {
+      if (error || response.statusCode >= 300) {
+        msg.send('There was an issue with the ice cream.');
+        console.error(error);
+        return;
+      }
+
       msg.send(':icecream:');
     });
+  });
+
+  // Move camera
+  robot.respond(/camera (-?[0-9]+)/i, function(msg) {
+    var move = parseInt(msg.match[1], 10);
+
+    if (_.isNaN(move) || !move) {
+      move = 0;
+    }
+
+    // Move camera
+    calculon('camera', function(error, response, body) {
+      if (error || response.statusCode >= 300) {
+        msg.send('There was an issue with the camera.');
+        console.error(error);
+        return;
+      }
+
+      var res = JSON.parse(body);
+      msg.send('Moving :camera: ' + move + ' degrees to position ' + res.return_value + ' (80 should be the mid point).');
+    }, move);
   });
 }
