@@ -31,6 +31,10 @@ var commonHeaders = {
   'Content-Type': 'application/x-www-form-urlencoded'
 };
 var forecastURL = 'https://api.forecast.io/forecast/' + forecastKey + '/' + forecastLocation;
+// Environment variables set for chartbeat module
+var chartbeatURL = 'https://api.chartbeat.com/live/summary/v3/?apikey=' + process.env.HUBOT_CHARTBEAT_API_KEY + '&host=' + process.env.HUBOT_CHARTBEAT_SITE + '&keys=read';
+var pixels = 60;
+var maxVisitors = 1000;
 
 
 // Make options for commands
@@ -60,19 +64,16 @@ var commandsURLs = {
 
 // Run command
 function calculon(command, done) {
-  var args = arguments;
-  [].splice.apply(args, [0, 2]);
+  var args = [].slice.apply(arguments);
+  var command = args.shift();
+  var done = args.shift();
   var options = commandsURLs[command].apply(this, args);
   return request(options, done);
 }
 
-
-//
-module.exports = function(robot) {
-  var cronJobs = {};
-
-  // Scheduling.  Ice cream check
-  cronJobs.icecream = new CronJob('0 0 14 * * *', function() {
+// Check ice cream (for use in cron)
+function makeIceCreamCheck(robot) {
+  return function() {
     // Determine if temperature is good enough, then send room and Calculon
     // command
     request(forecastURL, function(error, response, body) {
@@ -94,20 +95,49 @@ module.exports = function(robot) {
         });
       }
     });
-  }, null, true, 'America/New_York');
+  };
+}
 
-  // Scheduling.  Chartbeat check
-  cronJobs.chartbeat = new CronJob('0 */10 * * * *', function() {
-    return;
-
-    // Get Chartbeat API numbers an dupdate calculon
-    calculon('chartbeat', function(error, response, body) {
+// Charbeat check (for use with cron)
+function makeChartbeatCheck(robot) {
+  return function() {
+    // Get charbeat number
+    request(chartbeatURL, function(error, response, body) {
       if (error) {
         console.error(error);
+        return;
+      }
+
+      // Parse and check for number
+      var chartbeat = JSON.parse(body);
+      var obs;
+
+      if (chartbeat && chartbeat.read) {
+        obs = parseInt(chartbeat.read.data.observations, 10);
+        // Normalize to pixels
+        obs = Math.floor(Math.min((obs / maxVisitors) * pixels, pixels));
+
+        // Update calculon with observations
+        calculon('chartbeat', function(error, response, body) {
+          if (error) {
+            console.error(error);
+          }
+        }, obs);
       }
     });
-  }, null, true, 'America/New_York');
+  };
+}
 
+
+// Function for hubot
+module.exports = function(robot) {
+  var cronJobs = {};
+
+  // Scheduling.  Ice cream check
+  cronJobs.icecream = new CronJob('0 0 14 * * *', makeIceCreamCheck(robot), null, true, 'America/New_York');
+
+  // Scheduling.  Chartbeat check
+  cronJobs.chartbeat = new CronJob('0 */10 * * * *', makeChartbeatCheck(robot), null, true, 'America/New_York');
 
   // Hear ice cream
   robot.hear(/ice[ ]*cream/i, function(msg) {
