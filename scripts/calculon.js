@@ -181,7 +181,13 @@ module.exports = function(robot) {
       }
 
       var res = JSON.parse(body);
-      msg.send('Moving :camera: ' + move + ' degrees to position ' + res.return_value + ' (80 should be the mid point).');
+      // Check if it was actually moved
+      if (!res.connected || res.return_value === undefined) {
+        msg.send('Did not move the :camera:, it may not be connected to the internet.');
+      }
+      else {
+        msg.send('Moving :camera: ' + move + ' degrees to position ' + res.return_value + ' (80 is the middle).');
+      }
     }, move);
   });
 }
