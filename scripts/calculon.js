@@ -124,8 +124,15 @@ function makeChartbeatCheck(robot) {
       var chartbeat = JSON.parse(body);
       var obs;
 
+      // Check for error
+      if (chartbeat.error) {
+        console.error(chartbeat.error);
+        return;
+      }
+
       if (chartbeat && chartbeat.read) {
         obs = parseInt(chartbeat.read.data.observations, 10);
+
         // Normalize to pixels
         obs = Math.floor(Math.min((obs / maxVisitors) * pixels, pixels));
 
