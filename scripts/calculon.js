@@ -153,7 +153,7 @@ module.exports = function(robot) {
   var cronJobs = {};
 
   // Scheduling.  Ice cream check
-  cronJobs.icecream = new CronJob('0 0 14 * * *', makeIceCreamCheck(robot), null, true, 'America/New_York');
+  cronJobs.icecream = new CronJob('0 15 15 * * *', makeIceCreamCheck(robot), null, true, 'America/New_York');
 
   // Scheduling.  Chartbeat check
   cronJobs.chartbeat = new CronJob('0 */10 * * * *', makeChartbeatCheck(robot), null, true, 'America/New_York');
