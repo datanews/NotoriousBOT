@@ -2,15 +2,13 @@
 //   Random superhero name
 //
 // Commands:
-//   <hubot> superhero - Gets a random super hero name
+//   hubot superhero - Gets a random super hero name
 //
 // Dependencies:
 //   superheros
 //
 // Configuration:
 //
-// Commands:
-//   <hubot> superhero
 
 var superheroes = require('superheroes');
 
