@@ -1,14 +1,13 @@
 // Description:
 //   Random superhero name
 //
-// Commands:
-//   hubot superhero - Gets a random super hero name
-//
 // Dependencies:
 //   superheros
 //
 // Configuration:
 //
+// Commands:
+//   superhero - Gets a random super hero name
 
 var superheroes = require('superheroes');
 
@@ -16,7 +15,7 @@ var superheroes = require('superheroes');
 module.exports = function(robot) {
 
   // superhero command
-  robot.respond(/superhero/i, function(msg) {
-    msg.send(superheroes.random());
+  robot.hear(/superhero|super hero|superheros|super heros/i, function(msg) {
+    msg.send(superheroes.random() + ' could be your superhero.');
   });
 };
